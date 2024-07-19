@@ -11,7 +11,7 @@ connection.authenticate().then(()=>{
 
 
 const Pergunta = require("./database/Pergunta")
-
+const Resposta = require("./database/Resposta")
 
 
 app.set('view engine','ejs')
@@ -22,13 +22,27 @@ app.use(bodyParser.json())
 app.get("/perguntar",(req,res)=>{
 var nome = req.params.nome
 var empresa = req.query["empresa"]
-
-
 res.render("index",{
     nome:nome,
     empresa:empresa})
 
 })
+
+
+app.get("/pergunta/:id",(req,res)=> {
+   var id = req.params.id
+   Pergunta.findOne({
+    where: {id: id}
+   }).then(pergunta => {
+     if(pergunta != undefined){
+        res.render("pergunta",{pergunta:pergunta})
+     }else{
+        res.redirect("/")
+     }
+   })
+})
+
+
 
 app.get("/",(req,res)=> {
     Pergunta.findAll({raw: true,order:[
