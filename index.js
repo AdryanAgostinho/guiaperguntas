@@ -12,6 +12,8 @@ connection.authenticate().then(()=>{
 
 const Pergunta = require("./database/Pergunta")
 const Resposta = require("./database/Resposta")
+const Log = require("./database/Log")
+const pergunta = require("./database/Pergunta")
 
 
 app.set('view engine','ejs')
@@ -65,6 +67,26 @@ app.post("/salvarpergunta",(req,res)=> {
         res.redirect("/")
     })
 
+})
+
+app.post("/log",(req,res)=>{
+   var nome = "teste de nome"
+   var logu = "teste"
+   Log.create({
+    usuario:nome, 
+    Log:logu
+   }).then(()=>{
+    res.send("sucesso")
+})
+
+  
+   
+})
+
+app.get("/pegLog",(req,res)=>{
+    Log.findAll({raw: true}).then(pergunta=>{
+        res.send(pergunta)
+    })
 })
 
 app.listen(8080,()=>{
