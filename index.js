@@ -12,8 +12,6 @@ connection.authenticate().then(()=>{
 
 const Pergunta = require("./database/Pergunta")
 const Resposta = require("./database/Resposta")
-const Log = require("./database/Log")
-const pergunta = require("./database/Pergunta")
 
 
 app.set('view engine','ejs')
@@ -37,11 +35,24 @@ app.get("/pergunta/:id",(req,res)=> {
     where: {id: id}
    }).then(pergunta => {
      if(pergunta != undefined){
-        res.render("pergunta",{pergunta:pergunta})
+        Resposta.findAll({raw: true,
+            where: {perguntaId:pergunta.id},
+            order:[['id','DESC']]
+            }).then(respostas=>{
+            console.log(pergunta.id)
+            res.render("pergunta",{pergunta:pergunta,
+                respostaPergunta:respostas
+                
+            })
+        })
+
+      
      }else{
         res.redirect("/")
      }
    })
+
+   
 })
 
 
@@ -69,19 +80,19 @@ app.post("/salvarpergunta",(req,res)=> {
 
 })
 
-app.post("/log",(req,res)=>{
-   var nome = "teste de nome"
-   var logu = "teste"
-   Log.create({
-    usuario:nome, 
-    Log:logu
-   }).then(()=>{
-    res.send("sucesso")
+app.post("/responder",(req,res)=>{
+    var id = req.body.pergunta
+    var respos = req.body.corpo
+    Resposta.create({
+        perguntaId:id,
+        corpo:respos
+    }).then(()=>{
+        res.redirect("/pergunta/"+id)
+    })
+
 })
 
-  
-   
-})
+
 
 app.get("/pegLog",(req,res)=>{
     Log.findAll({raw: true}).then(pergunta=>{

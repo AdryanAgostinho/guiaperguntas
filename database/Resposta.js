@@ -17,4 +17,4 @@ const Resposta = connection.define("respostas",{
      console.log("tabela respostas sincronizadas com sucesso")
   })
 
-  exports.module = Resposta;
+  module.exports = Resposta;
